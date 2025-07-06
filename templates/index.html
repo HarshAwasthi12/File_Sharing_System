@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Sharing System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📤 Upload & Share Files</h1>
+        
+        <form id="uploadForm">
+            <input type="file" name="file" id="fileInput" required>
+            <button type="submit">Upload</button>
+        </form>
+
+        <div class="progress" id="progressBox">
+            <div class="bar" id="progressBar"></div>
+        </div>
+
+        <h2>📁 Shared Files</h2>
+        <ul id="fileList">
+            {% for file in files %}
+                <li>
+                    <a href="/download/{{ file.name }}">{{ file.name }}</a>
+                    <span class="size">({{ file.size }} KB)</span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <h2>📱 Scan QR to Access</h2>
+<p>Scan this on your mobile device to open the site:</p>
+<img src="{{ url_for('static', filename=qr_filename) }}" width="200" alt="QR Code">
+<p>Or manually open: <strong>{{ ip_address }}</strong></p>
+
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
