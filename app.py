@@ -155,4 +155,4 @@ def admin():
     return f"<h1>Admin Dashboard</h1><p>Total Files: {total_files}</p><a href='/'>Back</a>"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run()
