@@ -1,6 +1,5 @@
 from flask import Flask, request, send_from_directory, render_template, jsonify, redirect, session
 import os
-import socket
 import sqlite3
 import qrcode
 from datetime import datetime
@@ -37,15 +36,24 @@ def init_db():
 
 init_db()
 
-# ================= HELPERS =================
-def get_local_ip():
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('8.8.8.8', 80))
-        return s.getsockname()[0]
-    finally:
-        s.close()
+# ================= URL DETECTION =================
+# Automatically detect if running on Render
+access_url = os.environ.get("RENDER_EXTERNAL_URL")
 
+if not access_url:
+    # Local fallback
+    access_url = "http://127.0.0.1:5000"
+
+# ================= QR GENERATION =================
+qr_path = os.path.join('static', 'qr.png')
+
+if os.path.exists(qr_path):
+    os.remove(qr_path)
+
+qr = qrcode.make(access_url)
+qr.save(qr_path)
+
+# ================= HELPERS =================
 def format_size(size_bytes):
     if size_bytes < 1024:
         return f"{size_bytes} B"
@@ -55,12 +63,6 @@ def format_size(size_bytes):
         return f"{round(size_bytes / (1024 * 1024), 2)} MB"
     else:
         return f"{round(size_bytes / (1024 * 1024 * 1024), 2)} GB"
-
-# ================= QR GENERATION =================
-access_url = f"http://{get_local_ip()}:5000"
-qr_path = os.path.join('static', 'qr.png')
-qr = qrcode.make(access_url)
-qr.save(qr_path)
 
 # ================= AUTH =================
 @app.route('/login', methods=['GET', 'POST'])
@@ -125,34 +127,51 @@ def index():
         role=session.get('role')
     )
 
+# ================= UPLOAD =================
 @app.route('/upload', methods=['POST'])
 def upload():
+    if 'user' not in session:
+        return redirect('/login')
+
     file = request.files['file']
     if file:
         file.save(os.path.join(UPLOAD_FOLDER, file.filename))
         return jsonify({'status': 'success'})
     return jsonify({'status': 'fail'}), 400
 
+# ================= DOWNLOAD =================
 @app.route('/download/<filename>')
 def download(filename):
     return send_from_directory(UPLOAD_FOLDER, filename, as_attachment=True)
 
+# ================= DELETE =================
 @app.route('/delete/<filename>')
 def delete(filename):
     if session.get('role') != 'admin':
         return "Access Denied"
+
     path = os.path.join(UPLOAD_FOLDER, filename)
     if os.path.exists(path):
         os.remove(path)
+
     return jsonify({'status': 'deleted'})
 
+# ================= ADMIN =================
 @app.route('/admin')
 def admin():
     if session.get('role') != 'admin':
         return "Access Denied"
 
     total_files = len(os.listdir(UPLOAD_FOLDER))
-    return f"<h1>Admin Dashboard</h1><p>Total Files: {total_files}</p><a href='/'>Back</a>"
+    total_size = sum(os.path.getsize(os.path.join(UPLOAD_FOLDER, f))
+                     for f in os.listdir(UPLOAD_FOLDER))
+
+    return f"""
+    <h1>Admin Dashboard</h1>
+    <p>Total Files: {total_files}</p>
+    <p>Total Storage Used: {round(total_size / (1024*1024),2)} MB</p>
+    <a href='/'>Back</a>
+    """
 
 if __name__ == '__main__':
     app.run()
