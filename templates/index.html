@@ -1,39 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>File Sharing System</title>
+    <title>Professional File Sharing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>📤 Upload & Share Files</h1>
-        
-        <form id="uploadForm">
-            <input type="file" name="file" id="fileInput" required>
-            <button type="submit">Upload</button>
-        </form>
 
-        <div class="progress" id="progressBox">
-            <div class="bar" id="progressBar"></div>
-        </div>
+<div class="container">
+    <h1>🚀 File Sharing System</h1>
 
-        <h2>📁 Shared Files</h2>
-        <ul id="fileList">
-            {% for file in files %}
-                <li>
-                    <a href="/download/{{ file.name }}">{{ file.name }}</a>
-                    <span class="size">({{ file.size }} KB)</span>
-                </li>
-            {% endfor %}
-        </ul>
+    <!-- Upload Section -->
+    <form id="uploadForm">
+        <label class="custom-file-upload">
+            <input type="file" id="fileInput" required>
+            📂 Choose File
+        </label>
+        <button type="submit">⬆ Upload</button>
+    </form>
+
+    <div class="progress" id="progressBox">
+        <div class="bar" id="progressBar"></div>
     </div>
 
-    <h2>📱 Scan QR to Access</h2>
-<p>Scan this on your mobile device to open the site:</p>
-<img src="{{ url_for('static', filename=qr_filename) }}" width="200" alt="QR Code">
-<p>Or manually open: <strong>{{ ip_address }}</strong></p>
+    <h2>📁 Shared Files</h2>
 
+    
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Size</th>
+            <th>Uploaded</th>
+            <th>Action</th>
+        </tr>
+        {% for file in files %}
+        <tr>
+            <td>{{ file.name }}</td>
+            <td>{{ file.size }}</td>
+            <td>{{ file.time }}</td>
+            <td>
+                <a href="/download/{{ file.name }}" class="download">⬇</a>
+                <button onclick="deleteFile('{{ file.name }}')" class="delete">🗑</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <p class="access">🌐 Access: {{ ip_address }}</p>
+
+</div>
+
+<h2>📱 Scan to Connect</h2>
+<div style="text-align:center;">
+    <img src="{{ url_for('static', filename=qr_image) }}" width="200">
+    <p>{{ ip_address }}</p>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>
