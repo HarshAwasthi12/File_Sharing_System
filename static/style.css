@@ -1,74 +1,70 @@
 body {
-    font-family: Arial;
-    background: #f2f4f8;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    width: 80%;
-    margin: auto;
+    width: 85%;
+    margin: 30px auto;
     background: white;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
 h1 {
     text-align: center;
 }
 
-.custom-file-upload {
-    background: #007bff;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-input[type="file"] {
-    display: none;
-}
-
 button {
-    padding: 8px 12px;
+    padding: 8px 15px;
+    border-radius: 6px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    background: #667eea;
+    color: white;
 }
 
 button:hover {
-    opacity: 0.8;
+    background: #5a67d8;
 }
 
 table {
     width: 100%;
-    margin-top: 15px;
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
 th, td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
 }
 
-.download {
-    text-decoration: none;
-    font-size: 18px;
+tr:hover {
+    background: #f4f4f4;
 }
 
-.delete {
-    background: red;
+.meter {
+    background: #ddd;
+    height: 20px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.meter-fill {
+    height: 100%;
+    background: #28a745;
+    border-radius: 10px;
+}
+
+.dark {
+    background: #121212;
     color: white;
 }
 
-.progress {
-    width: 100%;
-    background: #ddd;
-    height: 8px;
-    margin-top: 10px;
-    display: none;
-}
-
-.bar {
-    height: 100%;
-    width: 0%;
-    background: green;
+.dark .container {
+    background: #1e1e1e;
 }

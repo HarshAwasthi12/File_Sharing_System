@@ -1,62 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Professional File Sharing</title>
+    <title>File Sharing</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
 <div class="container">
-    <h1>🚀 File Sharing System</h1>
 
-    <!-- Upload Section -->
-    <form id="uploadForm">
-        <label class="custom-file-upload">
-            <input type="file" id="fileInput" required>
-            📂 Choose File
-        </label>
-        <button type="submit">⬆ Upload</button>
-    </form>
+<h1>🚀 File Sharing System</h1>
 
-    <div class="progress" id="progressBox">
-        <div class="bar" id="progressBar"></div>
-    </div>
+<button onclick="toggleDark()">🌙 Dark Mode</button>
+<a href="/logout">Logout</a>
 
-    <h2>📁 Shared Files</h2>
+{% if role == 'admin' %}
+<a href="/admin">Admin Dashboard</a>
+{% endif %}
 
-    
+<h3>Storage Usage</h3>
+<div class="meter">
+    <div class="meter-fill" style="width: {{ usage }}%;"></div>
+</div>
+<p>{{ usage }}% used</p>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Size</th>
-            <th>Uploaded</th>
-            <th>Action</th>
-        </tr>
-        {% for file in files %}
-        <tr>
-            <td>{{ file.name }}</td>
-            <td>{{ file.size }}</td>
-            <td>{{ file.time }}</td>
-            <td>
-                <a href="/download/{{ file.name }}" class="download">⬇</a>
-                <button onclick="deleteFile('{{ file.name }}')" class="delete">🗑</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+<input type="text" id="search" placeholder="Search file..." onkeyup="searchFile()">
 
-    <p class="access">🌐 Access: {{ ip_address }}</p>
+<form id="uploadForm">
+    <input type="file" id="fileInput" required>
+    <button type="submit">Upload</button>
+</form>
+
+<h2>Files</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Size</th>
+<th>Time</th>
+<th>Action</th>
+</tr>
+
+{% for file in files %}
+<tr>
+<td>{{ file.name }}</td>
+<td>{{ file.size }}</td>
+<td>{{ file.time }}</td>
+<td>
+<a href="/download/{{ file.name }}">⬇</a>
+{% if role == 'admin' %}
+<button onclick="deleteFile('{{ file.name }}')">🗑</button>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+
+</table>
+
+<p>{{ ip_address }}</p>
 
 </div>
 
-<h2>📱 Scan to Connect</h2>
-<div style="text-align:center;">
+
+
+<h2>📱 Scan to Access</h2>
+<div style="text-align:center; margin-top:20px;">
     <img src="{{ url_for('static', filename=qr_image) }}" width="200">
     <p>{{ ip_address }}</p>
 </div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-
 </body>
 </html>
